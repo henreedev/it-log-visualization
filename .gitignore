@@ -35,6 +35,10 @@ MANIFEST
 *.manifest
 *.spec
 
+node_modules/
+
+it-log-visualization/
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
