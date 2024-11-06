@@ -128,7 +128,7 @@ const chartData = {
     { year: 2016, count: 28 },
   ];
 
-  new Chart(document.getElementById("acquisitions"), {
+  new Chart(document.getElementById("visualization"), {
     type: "line",
     data: chartData,
     // options: {
@@ -137,5 +137,17 @@ const chartData = {
     //     y: { beginAtZero: true },
     //   },
     // },
+    options: {
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            unit: "day", // Specify the unit you want to use
+          },
+          min: "2024-09-09", // Start date of the range
+          max: "2024-11-12", // End date of the range
+        },
+      },
+    },
   });
 })();

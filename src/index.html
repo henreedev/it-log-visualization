@@ -4,12 +4,50 @@
     <title>Chart.js example</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
   </head>
   <body>
     <!-- <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br/> -->
-    <div style="width: 800px"><canvas id="acquisitions"></canvas></div>
+    <div style="width: 800px"><canvas id="visualization"></canvas></div>
 
     <!-- <script type="module" src="dimensions.js"></script> -->
-    <script type="module" src="acquisitions.js"></script>
+    <script type="module" src="visualization.js"></script>
+    <!-- HTML !-->
+    <button class="button" role="button">Buttone</button>
+    <h3>Select Date Range</h3>
+    <div>
+      <label for="startDate">Start Date:</label>
+      <input id="startDate" type="text" placeholder="Select Start Date" />
+    </div>
+    <div>
+      <label for="endDate">End Date:</label>
+      <input id="endDate" type="text" placeholder="Select End Date" />
+    </div>
+
+    <!-- Include Flatpickr script -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/en.js"></script>
+
+    <script>
+      // Step 2: Initialize Flatpickr for both start and end date fields
+      const startDatePicker = flatpickr("#startDate", {
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates, dateStr, instance) {
+          endDatePicker.set("minDate", dateStr); // Update end date's minDate based on start date selection
+        },
+      });
+
+      const endDatePicker = flatpickr("#endDate", {
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates, dateStr, instance) {
+          startDatePicker.set("maxDate", dateStr); // Update start date's maxDate based on end date selection
+        },
+      });
+    </script>
+    <!-- <script src="/src/parser.js"></script> -->
   </body>
 </html>

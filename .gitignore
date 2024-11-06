@@ -35,6 +35,7 @@ MANIFEST
 *.manifest
 *.spec
 
+
 node_modules/
 
 it-log-visualization/
