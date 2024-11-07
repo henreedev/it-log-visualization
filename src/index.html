@@ -12,7 +12,8 @@
   </head>
   <body>
     <h1>Select a Directory and Display File Contents</h1>
-  <button onclick="selectDirectory()">Select Directory</button>
+  <!-- <button onclick="selectDirectory()">Select Directory</button> -->
+  <button id="selectDirectoryBtn">Select Directory</button>
   <div id="fileList" style="margin-top: 20px;"></div>
 
   <script>
@@ -57,7 +58,19 @@
     }
   </script>
     <!-- <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br/> -->
-    <div style="width: 800px"><canvas id="visualization"></canvas></div>
+    <canvas id="concurrentUsersChart" width="800" height="400"></canvas>
+    <label for="groupSelect">Select Group:</label>
+    <select id="groupSelect">
+      <option value="all">All Groups</option>
+    <select id="groupSelect"></select>
+
+
+    <label for="startDate">Start Date:</label>
+      <input type="text" id="startDate" placeholder="Select Start Date">
+
+    <label for="endDate">End Date:</label>
+      <input type="text" id="endDate" placeholder="Select End Date">
+      <div style="width: 800px"><canvas id="visualization"></canvas></div>
 
     <!-- <script type="module" src="dimensions.js"></script> -->
     <script type="module" src="visualization.js"></script>
@@ -93,6 +106,8 @@
         },
       });
     </script>
+    <script src="script.js"></script>
+
     <!-- <script src="/src/parser.js"></script> -->
   </body>
 </html>
