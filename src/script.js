@@ -1,25 +1,4 @@
-const groups = [
-	"ENG-BDW", "ENG-BH095", "ENG-BH097", "ENG-BH114", "ENG-BH190",
-	"ENG-BH194", "ENG-CLA", "ENG-CLB", "ENG-EL", "ENG-ERC", "ENG-MEDIA", "ENG-MM",
-	"ENG-PL", "ENG-STUDIO", "ENG-SWR", "ENG-WM", "ENG-XRD", "IMNI", "pengaz"
-  ];
-  
-  // Global variables
-  let groupedLogs = {};
-  let chart = null;
-  
-  // Event listeners
-  document.getElementById('selectDirectoryBtn').addEventListener('click', selectDirectory);
-  document.getElementById('groupSelect').addEventListener('change', () => visualizeData());
-  document.getElementById('startDate').addEventListener('change', () => visualizeData());
-  document.getElementById('endDate').addEventListener('change', () => visualizeData());
-  
-  // Initialize date pickers using flatpickr
-  flatpickr("#startDate", { enableTime: true, dateFormat: "Y-m-d H:i" });
-  flatpickr("#endDate", { enableTime: true, dateFormat: "Y-m-d H:i" });
-
-  
-  // Function to select directory and process files
+// Function to select directory and process files
 async function selectDirectory() {
 	try {
 	  // Prompt the user to select a directory
@@ -80,106 +59,6 @@ async function selectDirectory() {
 			groupSelect.appendChild(option);
 		}
 	}
-  }
-  
-  
-  function visualizeData() {
-	const groupName = document.getElementById('groupSelect').value;
-  
-	if (!groupedLogs[groupName] || groupedLogs[groupName].length === 0) {
-	  console.error(`Group ${groupName} has no log files.`);
-	  alert(`Group ${groupName} has no log files.`);
-	  return;
-	}
-  
-	let allSessions = [];
-  
-	// Process each log file (computer) separately
-	for (const file of groupedLogs[groupName]) {
-	  // Parse events for this log file
-	  const events = parseLogContent(file.content);
-	  if (events.length === 0) {
-		continue;
-	  }
-  
-	  // Pair login and logoff events within this log file
-	  const sessions = pairLoginLogoffEventsPerFile(events);
-	  allSessions = allSessions.concat(sessions);
-	}
-  
-	if (allSessions.length === 0) {
-	  alert(`No valid log entries found for group ${groupName}.`);
-	  return;
-	}
-  
-	// Filter sessions based on selected date range
-	const filteredSessions = filterSessionsByDateRange(allSessions);
-  
-	if (filteredSessions.length === 0) {
-	  alert('No sessions found within the selected date range.');
-	  return;
-	}
-  
-	// Generate concurrent users data
-	const concurrentUsersData = calculateConcurrentUsers(filteredSessions);
-  
-	// Prepare data for Chart.js
-	const labels = concurrentUsersData.map(point => point.time);
-	const data = concurrentUsersData.map(point => point.users);
-  
-	// Create or update the chart
-	const ctx = document.getElementById('concurrentUsersChart').getContext('2d');
-  
-	if (chart) {
-	  chart.destroy();
-	}
-  
-	chart = new Chart(ctx, {
-	  type: 'line',
-	  data: {
-		labels: labels,
-		datasets: [{
-		  label: 'Concurrent Users',
-		  data: data,
-		  borderColor: 'blue',
-		  fill: false,
-		  pointRadius: 2
-		}]
-	  },
-	  options: {
-		scales: {
-		  x: {
-			type: 'time',
-			time: {
-			  tooltipFormat: 'MMM d, yyyy, h:mm:ss a',
-			  displayFormats: {
-				millisecond: 'MMM d, yyyy, h:mm:ss.SSS a',
-				second: 'MMM d, yyyy, h:mm:ss a',
-				minute: 'MMM d, yyyy, h:mm a',
-				hour: 'MMM d, yyyy, h a',
-				day: 'MMM d, yyyy',
-				month: 'MMM yyyy',
-				year: 'yyyy'
-			  }
-			},
-			title: {
-			  display: true,
-			  text: 'Time'
-			}
-		  },
-		  y: {
-			title: {
-			  display: true,
-			  text: 'Concurrent Users'
-			},
-			beginAtZero: true,
-			ticks: {
-			  precision: 0
-			}
-		  }
-		}
-	  }
-	});
   }
   
   // Function to parse log entries
@@ -280,31 +159,6 @@ async function selectDirectory() {
   
 	return pairedSessions;
   }
-  
-  // Function to calculate concurrent users over time
-  function calculateConcurrentUsers(sessions) {
-	const timePoints = [];
-  
-	for (const session of sessions) {
-	  timePoints.push({ time: session.loginTime, change: 1 });
-	  timePoints.push({ time: session.logoffTime, change: -1 });
-	}
-  
-	// Sort time points
-	timePoints.sort((a, b) => a.time - b.time);
-  
-	// Calculate concurrent users
-	const concurrentUsersOverTime = [];
-	let concurrentUsers = 0;
-  
-	for (const point of timePoints) {
-	  concurrentUsers += point.change;
-	  concurrentUsersOverTime.push({ time: new Date(point.time), users: concurrentUsers });
-	}
-  
-	return concurrentUsersOverTime;
-  }
-
   // Function to filter sessions based on date range
 function filterSessionsByDateRange(sessions) {
 	const startDateStr = document.getElementById('startDate').value;
@@ -338,3 +192,179 @@ function filterSessionsByDateRange(sessions) {
 	  return overlaps;
 	});
   }
+// Predefined groups (same as before)
+const groups = [
+	"ENG-BDW", "ENG-BH095", "ENG-BH097", "ENG-BH114", "ENG-BH190",
+	"ENG-BH194", "ENG-CLA", "ENG-CLB", "ENG-EL", "ENG-ERC", "ENG-MEDIA", "ENG-MM",
+	"ENG-PL", "ENG-STUDIO", "ENG-SWR", "ENG-WM", "ENG-XRD", "IMNI", "pengaz"
+  ];
+  
+  // Global variables
+  let groupedLogs = {};
+  let chart = null;
+  
+  // Event listeners (same as before)
+  document.getElementById('selectDirectoryBtn').addEventListener('click', selectDirectory);
+  document.getElementById('groupSelect').addEventListener('change', () => visualizeData());
+  document.getElementById('startDate').addEventListener('change', () => visualizeData());
+  document.getElementById('endDate').addEventListener('change', () => visualizeData());
+  
+  // Initialize date pickers using flatpickr (same as before)
+  flatpickr("#startDate", { enableTime: true, dateFormat: "Y-m-d H:i" });
+  flatpickr("#endDate", { enableTime: true, dateFormat: "Y-m-d H:i" });
+  
+
+  // Function to visualize data based on selected group and date range
+  function visualizeData() {
+	const groupName = document.getElementById('groupSelect').value;
+  
+	if (!groupedLogs[groupName] || groupedLogs[groupName].length === 0) {
+	  console.error(`Group ${groupName} has no log files.`);
+	  alert(`Group ${groupName} has no log files.`);
+	  return;
+	}
+  
+	let allSessions = [];
+  
+	// Process each log file (computer) separately
+	for (const file of groupedLogs[groupName]) {
+	  // Parse events for this log file
+	  const events = parseLogContent(file.content);
+	  if (events.length === 0) {
+		continue;
+	  }
+  
+	  // Pair login and logoff events within this log file
+	  const sessions = pairLoginLogoffEventsPerFile(events);
+	  allSessions = allSessions.concat(sessions);
+	}
+  
+	if (allSessions.length === 0) {
+	  alert(`No valid log entries found for group ${groupName}.`);
+	  return;
+	}
+  
+	// Filter sessions based on selected date range
+	const filteredSessions = filterSessionsByDateRange(allSessions);
+  
+	if (filteredSessions.length === 0) {
+	  alert('No sessions found within the selected date range.');
+	  return;
+	}
+  
+	// Generate and aggregate concurrent users data
+	const concurrentUsersData = calculateAndAggregateConcurrentUsers(filteredSessions);
+  
+	// Prepare data for Chart.js
+	const labels = concurrentUsersData.map(point => point.time);
+	const data = concurrentUsersData.map(point => point.users);
+  
+	// Create or update the chart
+	const ctx = document.getElementById('concurrentUsersChart').getContext('2d');
+  
+	if (chart) {
+	  chart.destroy();
+	}
+  
+	chart = new Chart(ctx, {
+	  type: 'bar', // Bar chart
+	  data: {
+		labels: labels,
+		datasets: [{
+		  label: 'Average Concurrent Users per Hour',
+		  data: data,
+		  backgroundColor: 'rgba(54, 162, 235, 0.6)', // Set bar color
+		  borderColor: 'rgba(54, 162, 235, 1)',
+		  borderWidth: 1,
+		  barThickness: 'flex', // Adjust bar thickness
+		  maxBarThickness: 50 // Maximum bar thickness in pixels
+		}]
+	  },
+	  options: {
+		scales: {
+		  x: {
+			type: 'time',
+			time: {
+			  unit: 'hour', // Set time unit to 'hour' for hourly aggregation
+			  tooltipFormat: 'MMM d, yyyy, h a',
+			  displayFormats: {
+				hour: 'MMM d, yyyy, h a'
+			  }
+			},
+			title: {
+			  display: true,
+			  text: 'Time'
+			}
+		  },
+		  y: {
+			title: {
+			  display: true,
+			  text: 'Average Concurrent Users'
+			},
+			beginAtZero: true,
+			ticks: {
+			  precision: 0
+			}
+		  }
+		},
+		plugins: {
+		  tooltip: {
+			mode: 'index',
+			intersect: false
+		  }
+		}
+	  }
+	});
+  }
+  // Function to calculate and aggregate concurrent users over time
+  function calculateAndAggregateConcurrentUsers(sessions) {
+	const timePoints = [];
+  
+	for (const session of sessions) {
+	  timePoints.push({ time: session.loginTime, change: 1 });
+	  timePoints.push({ time: session.logoffTime, change: -1 });
+	}
+  
+	// Sort time points
+	timePoints.sort((a, b) => a.time - b.time);
+  
+	// Calculate concurrent users at each time point
+	let concurrentUsers = 0;
+	const concurrentUsersOverTime = [];
+  
+	for (const point of timePoints) {
+	  concurrentUsers += point.change;
+	  concurrentUsersOverTime.push({ time: new Date(point.time), users: concurrentUsers });
+	}
+  
+	// Aggregate data over hourly intervals
+	const aggregatedData = {};
+	for (const point of concurrentUsersOverTime) {
+	  // Round time to the start of the hour
+	  const time = new Date(point.time);
+	  time.setMinutes(0, 0, 0);
+  
+	  const timeKey = time.getTime();
+  
+	  if (!aggregatedData[timeKey]) {
+		aggregatedData[timeKey] = { time: new Date(timeKey), users: [], count: 0 };
+	  }
+  
+	  aggregatedData[timeKey].users.push(point.users);
+	  aggregatedData[timeKey].count += 1;
+	}
+  
+	// Calculate average users for each hour
+	const aggregatedArray = [];
+	for (const key in aggregatedData) {
+	  const item = aggregatedData[key];
+	  const averageUsers = item.users.reduce((a, b) => a + b, 0) / item.count;
+	  aggregatedArray.push({ time: item.time, users: averageUsers });
+	}
+  
+	// Sort aggregated data by time
+	aggregatedArray.sort((a, b) => a.time - b.time);
+  
+	return aggregatedArray;
+  }
+  
